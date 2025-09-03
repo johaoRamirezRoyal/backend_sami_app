@@ -2,12 +2,16 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import RouterUsuarios from "./routes/usuariosRutas.js";
+import { corsMiddleware } from "./middlewares/cors.js";
 
 // Inicializamos el servidor Express
 const app = express();
 
+//Desabilitamos la información de hecho con Express
+app.disable("x-powered-by");
+
 // Configuramos las variables de entorno que se usaran en el servidor Express
-dotenv.config();
+//dotenv.config();
 
 //Constante para el puerto del servidor
 const PORT = process.env.PORT || 3000;

@@ -9,4 +9,14 @@ RouterUsuarios.get("/", async (req, res) => {
     await usuariosControl.getUsuarios(req, res);
 });
 
+//ruta para obtener un usuario
+RouterUsuarios.get("/usuario", async (req, res) => {
+    await usuariosControl.getUsuario(req, res);
+});
+
+//ruta para validar la contraseña de un usuario
+RouterUsuarios.post("/validarContraseña", async (req, res) => {
+    await usuariosControl.validarContraseña(req, res);
+});
+
 export default RouterUsuarios;

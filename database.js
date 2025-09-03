@@ -22,8 +22,8 @@ const pool = mysql.createPool({
 
 // Conexión inicial para validar
 pool.getConnection((err) => {
-  if (!err) {
-    console.log("✅ Conexión establecida con éxito");
+  if (!err) { 
+    console.log("🤖 Conectado a la base de datos");
   } else {
     console.log("❌ Error al conectar con la base de datos:", err.message);
   }
