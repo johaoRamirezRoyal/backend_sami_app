@@ -23,9 +23,8 @@ app.get("/", (req, res) => {
   res.send("Hello Hola mundo español!");
 });
 
-
+//Rutas para los usuarios
 app.use("/api/usuarios", RouterUsuarios);
-
 
 
 //app listen para levantar el servidor

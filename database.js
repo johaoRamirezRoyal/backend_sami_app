@@ -15,6 +15,7 @@ const pool = mysql.createPool({
   user: data.user, 
   password: data.password,
   database: data.database,
+  namedPlaceholders: true,
 });
 
 
