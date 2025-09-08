@@ -5,7 +5,8 @@ export default class UsuariosModel {
     //Función para obtener todos los usuarios
     async getUsuarios($cantidad = 10){
         const tabla = "usuarios";
-        const query = `SELECT * FROM ${tabla} ORDER BY id_user ASC LIMIT :limite;`;
+        const query = `SELECT id_user, documento, nombre, apellido, correo, telefono, asignatura, user, perfil, estado, id_nivel, id_curso, id_grupo 
+                        FROM ${tabla} ORDER BY id_user ASC LIMIT :limite;`;
         const [results] = await connection.execute(query, {limite: $cantidad});
         return results;
     }
@@ -13,8 +14,8 @@ export default class UsuariosModel {
     //Obtener un usuario mediante su user
     async getUsuarioUser(user){
         const tabla = "usuarios";
-        const query = `SELECT u.id_user, u.nombre, u.correo, u.perfil, u.id_nivel, u.documento FROM ${tabla} u WHERE user = :user;`;
-        const [results] = await connection.execute(query, {user});
+        const query = `SELECT u.id_user, u.estado, u.nombre, u.correo, u.perfil, u.id_nivel, u.documento, u.pass FROM ${tabla} u WHERE user = :user;`;
+        const [[results]] = await connection.execute(query, {user});
         return results;
     }
 
@@ -25,6 +26,5 @@ export default class UsuariosModel {
         const [results] = await connection.execute(query, {id_user, contraseña});
         return results;
     }
-
 }
 

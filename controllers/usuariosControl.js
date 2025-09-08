@@ -1,5 +1,6 @@
-import UsuariosModel from "../modelos/usuariosModel.js";
 
+import UsuariosModel from "../modelos/usuariosModel.js";
+import bcrypt from "bcrypt";
 
 export default class UsuariosControl {
     usuariosModel = new UsuariosModel();
@@ -51,6 +52,39 @@ export default class UsuariosControl {
 
             const usuario = await this.usuariosModel.validarContraseña(id_user, contraseña);
             res.status(200).json(usuario);
+
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
+
+    async iniciarSesion(req, res){
+        try{
+            const {usuario, contraseña} = req.body;
+            
+            if(!usuario || !contraseña){
+                return res.status(400).json({error: "Debe completar el los campos de usuario y contraseña"});
+            }
+
+            const usuario_sesion = await this.usuariosModel.getUsuarioUser(usuario);
+
+            if(!usuario_sesion){
+                return res.status(400).json({error: "Usuario no encontrado"});
+            }
+
+            if(usuario_sesion.estado !== "activo"){
+                return res.status(400).json({error: "Usuario no activo, habla con el administrador de S. A. M. I"});
+            }
+
+            // Hash guardado en PHP ($2y$...). Reemplazar prefijo para Node.
+            const hashPHP = String(usuario_sesion.pass || "");
+            const hashNode = hashPHP.startsWith("$2y$") ? hashPHP.replace("$2y$", "$2b$") : hashPHP;
+
+            const valid = await bcrypt.compare(String(contraseña), hashNode);
+
+            if(!valid) return res.status(400).json({error: "Contraseña incorrecta"});
+
+            res.status(200).json(usuario_sesion);
 
         }catch(err){
             res.status(500).json({error: err.message});
