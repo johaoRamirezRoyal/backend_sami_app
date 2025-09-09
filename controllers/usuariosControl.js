@@ -84,7 +84,26 @@ export default class UsuariosControl {
 
             if(!valid) return res.status(400).json({error: "Contraseña incorrecta"});
 
-            res.status(200).json(usuario_sesion);
+            const payload = {
+                id_log: usuario_sesion.id_user,
+                nombre: usuario_sesion.nombre,
+                correo: usuario_sesion.correo,
+                perfil: usuario_sesion.perfil,
+                nivel: usuario_sesion.nivel,
+                documento: usuario_sesion.documento,
+                estado: usuario_sesion.estado
+            }
+
+            const token = jwt.sign(payload, process.env.SECRET, {
+                expiresIn: process.env.EXPIRES_IN
+            });
+
+            res.status(200).json(
+                {
+                    usuario: payload,
+                    token
+                }
+            );
 
         }catch(err){
             res.status(500).json({error: err.message});

@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
+//import dotenv from "dotenv";
 import RouterUsuarios from "./routes/usuariosRutas.js";
-import { corsMiddleware } from "./middlewares/cors.js";
+//import { corsMiddleware } from "./middlewares/cors.js";
 
 // Inicializamos el servidor Express
 const app = express();
