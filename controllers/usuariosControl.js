@@ -138,7 +138,8 @@ export default class UsuariosControl {
                 nombre: usuario_sesion.nombre,
                 correo: usuario_sesion.correo,
                 perfil: usuario_sesion.perfil,
-                nivel: usuario_sesion.nivel,
+                nivel: usuario_sesion.id_nivel,
+                apellido: usuario_sesion.apellido,
                 documento: usuario_sesion.documento,
                 estado: usuario_sesion.estado
             }

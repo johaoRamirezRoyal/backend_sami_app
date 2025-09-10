@@ -16,7 +16,7 @@ export default class UsuariosModel {
     //Obtener un usuario mediante su user
     async getUsuarioUser(user){
         const tabla = "usuarios";
-        const query = `SELECT u.id_user, u.estado, u.nombre, u.correo, u.perfil, u.id_nivel, u.documento, u.pass FROM ${tabla} u WHERE user = :user;`;
+        const query = `SELECT u.id_user, u.estado, u.nombre, u.apellido, u.correo, u.perfil, u.id_nivel, u.documento, u.pass FROM ${tabla} u WHERE user = :user;`;
         const [[results]] = await connection.execute(query, {user});
         return results;
     }

@@ -1,5 +1,4 @@
 import connection from "../database.js";
-
 export default class PerfilModel {
     //mostrar Datos de perfil de un usuario
     async getDatosPerfil(id){
@@ -31,4 +30,25 @@ export default class PerfilModel {
         const [result] = await connection.execute(query);
         return result;
     }
+
+    async patchPerfilUsuario(datos){
+        const tabla = "usuarios";
+        const query = `UPDATE ${tabla} SET nombre = :nombre, apellido = :apellido, correo = :correo, telefono = :telefono, 
+                        documento = :documento, perfil = :perfil, id_nivel = :id_nivel WHERE id_user = :id_user;`;
+
+        const [result] = await connection.execute(query, datos);
+        if(result.affectedRows > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    async getTipoDeDocumentos(){
+        const tabla = "tipo_doc";
+        const query = `SELECT * FROM ${tabla} WHERE activo = 1 ORDER BY id ASC;`;
+        const [results] = await connection.execute(query);
+        return results;
+    }
+
 }
