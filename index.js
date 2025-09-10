@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 //import dotenv from "dotenv";
 import RouterUsuarios from "./routes/usuariosRutas.js";
+import RouterPerfil from "./routes/perfilRutas.js";
 //import { corsMiddleware } from "./middlewares/cors.js";
 
 // Inicializamos el servidor Express
@@ -24,11 +25,14 @@ app.use(cors());
 
 //Ruta de inicio (Prueba)
 app.get("/", (req, res) => {
-  res.send("Hello Hola mundo español!");
+  res.send("SERVIDOR DEL COLEGIO REAL ROYAL SCHOOL 👑 🏫... CONEXIÓN ESTABLECIDA 💪");
 });
 
 //Rutas para los usuarios
 app.use("/api/usuarios", RouterUsuarios);
+
+//Rutas para los perfiles
+app.use("/api/perfil", RouterPerfil);
 
 
 //app listen para levantar el servidor

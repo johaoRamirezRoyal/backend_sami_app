@@ -1,6 +1,7 @@
 
 import UsuariosModel from "../modelos/usuariosModel.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export default class UsuariosControl {
     usuariosModel = new UsuariosModel();
@@ -58,6 +59,54 @@ export default class UsuariosControl {
         }
     }
 
+    async buscarUsuarioID(req, res){
+        try{
+            const {id_user} = req.params;
+            
+            if(!id_user){
+                return res.status(400).json({error: "Debe completar el campo de id_user"});
+            }
+
+            const data_usuario = await this.usuariosModel.buscarUsuarioID(id_user);
+            res.status(200).json(data_usuario);
+
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
+
+    async buscarUsuariosPorPerfil(req, res){
+        try{
+            const {perfil} = req.params;
+            
+            if(!perfil){
+                return res.status(400).json({error: "Debe completar el campo de perfil"});
+            }
+
+            const data_usuario = await this.usuariosModel.getUsuariosPorPerfil(perfil);
+            res.status(200).json(data_usuario);
+
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
+
+    async buscarEstudianteAcudiente(req, res){
+        try{
+            const {id} = req.params;
+            
+            if(!id){
+                return res.status(400).json({error: "Debe completar el campo de id"});
+            }
+
+            const data_usuario = await this.usuariosModel.getEstudianteAcudiente(id);
+            res.status(200).json(data_usuario);
+
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
+
     async iniciarSesion(req, res){
         try{
             const {usuario, contraseña} = req.body;
@@ -101,7 +150,8 @@ export default class UsuariosControl {
             res.status(200).json(
                 {
                     usuario: payload,
-                    token
+                    token,
+                    message: "Sesión iniciada correctamente. " + "Hola " + payload.nombre
                 }
             );
 

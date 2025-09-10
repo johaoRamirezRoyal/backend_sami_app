@@ -24,4 +24,16 @@ RouterUsuarios.post("/login", async (req, res) => {
     await usuariosControl.iniciarSesion(req, res);
 });
 
+RouterUsuarios.get("/:id_user", async (req, res) => {
+    await usuariosControl.buscarUsuarioID(req, res);
+});
+
+RouterUsuarios.get("/perfil/:perfil", async (req, res) => {
+    await usuariosControl.buscarUsuariosPorPerfil(req, res);
+});
+
+RouterUsuarios.get("/estudiante/:id", async (req, res) => {
+    await usuariosControl.buscarEstudianteAcudiente(req, res);
+});
+
 export default RouterUsuarios;
