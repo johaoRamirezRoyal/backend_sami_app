@@ -19,4 +19,9 @@ RouterAsistenciaEstudiantes.post("/registrarAsistencia", async (req, res) => {
     await asistenciaEstudiantesControl.registrarAsistenciaEstudiante(req, res);
 });
 
+//Ruta para obtener asistencias de estudiantes del día actual
+RouterAsistenciaEstudiantes.get("/asistenciasDiaHoy", async (req, res) => {
+    await asistenciaEstudiantesControl.getAsistenciasEstudiantesDiaHoy(req, res);
+});
+
 export default RouterAsistenciaEstudiantes;

@@ -46,4 +46,14 @@ export default class AsistenciaEstudiantesControl {
         }
     }
 
+    //Funcion para traer las asistencias de estudiantes del día actual
+    async getAsistenciasEstudiantesDiaHoy(req, res){
+        try{
+            const asistencias = await this.asistenciaEstudianteModel.getAsistenciasEstudiantesDiaHoy();
+            res.status(200).json(asistencias);
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
+
 }

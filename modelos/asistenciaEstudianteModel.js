@@ -22,4 +22,14 @@ export default class AsistenciaEstudianteModel {
         }
     }
 
+    async getAsistenciasEstudiantesDiaHoy(){
+        const tabla = "asistencias_estudiantes";
+        const query = `SELECT ae.*, concat(u.nombre, ' ', u.apellido) AS nom_user, u.documento, u.correo 
+                        FROM ${tabla} ae 
+                        LEFT JOIN usuarios u ON u.documento = ae.documento 
+                        WHERE  DATE(ae.fecha_registro) = CURDATE(); `;
+        const [results] = await connection.execute(query);
+        return results;
+    }
+
 }
