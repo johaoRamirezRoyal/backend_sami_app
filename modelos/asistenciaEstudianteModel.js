@@ -28,7 +28,8 @@ export default class AsistenciaEstudianteModel {
                         FROM ${tabla} ae 
                         LEFT JOIN usuarios u ON u.documento = ae.documento 
                         LEFT JOIN cursos c ON c.id = u.id_curso
-                        WHERE  DATE(ae.fecha_registro) = CURDATE(); `;
+                        WHERE  DATE(ae.fecha_registro) = CURDATE()
+                        ORDER BY ae.hora_registro DESC; `;
         const [results] = await connection.execute(query);
         return results;
     }
