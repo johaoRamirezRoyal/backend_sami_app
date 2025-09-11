@@ -24,4 +24,6 @@ RouterAsistenciaEstudiantes.get("/asistenciasDiaHoy", async (req, res) => {
     await asistenciaEstudiantesControl.getAsistenciasEstudiantesDiaHoy(req, res);
 });
 
+//http://localhost:3000/api/asistencias_estudiantes/asistenciasDiaHoy
+
 export default RouterAsistenciaEstudiantes;
