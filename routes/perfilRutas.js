@@ -1,16 +1,14 @@
 import { Router } from "express";
 import PerfilControl from "../controllers/perfilControl.js";
 
-
 /**
  *  Para acceder a las rutas de los perfiles es la siguiente dirección url: http://localhost:3000/api/perfil
  */
 
-
 const perfilControl = new PerfilControl(); // 👈 crea la instancia (singleton ya se encarga de no duplicar)
 const RouterPerfil = Router();
 
-// Ruta para obtener todos los usuarios
+// Ruta para obtener información de perfil del usuarios con el ID
 RouterPerfil.get("/usuario/:id", async (req, res) => {
     await perfilControl.getDatosPerfil(req, res);
 });
@@ -23,7 +21,7 @@ RouterPerfil.get("/", async (req, res) => {
 //Actualizar información de perfil de usuario
 RouterPerfil.patch("/usuario/:id_user", async (req, res) => {
     await perfilControl.patchPerfil(req, res);
-})
+});
 
 //Obtener los tipos de documentos de identidad
 RouterPerfil.get("/tipo_documentos", async (req, res) => {

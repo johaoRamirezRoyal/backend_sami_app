@@ -4,6 +4,10 @@ import UsuariosControl from "../controllers/usuariosControl.js";
 const usuariosControl = new UsuariosControl(); // 👈 crea la instancia (singleton ya se encarga de no duplicar)
 const RouterUsuarios = Router();
 
+/**
+ * Para acceder a las rutas de los usuarios es la siguiente dirección url: http://localhost:3000/api/usuarios
+*/
+
 // Ruta para obtener todos los usuarios
 RouterUsuarios.get("/", async (req, res) => {
     await usuariosControl.getUsuarios(req, res);
@@ -24,14 +28,17 @@ RouterUsuarios.post("/login", async (req, res) => {
     await usuariosControl.iniciarSesion(req, res);
 });
 
+//Ruta para acceder a un usuario con su ID
 RouterUsuarios.get("/:id_user", async (req, res) => {
     await usuariosControl.buscarUsuarioID(req, res);
 });
 
+//Ruta para obtener los usuarios de un perfil en especifico
 RouterUsuarios.get("/perfil/:perfil", async (req, res) => {
     await usuariosControl.buscarUsuariosPorPerfil(req, res);
 });
 
+//Obtener usuarios de estudiantes por algun motivo no funciona TODO: ARREGLAR
 RouterUsuarios.get("/estudiante/:id", async (req, res) => {
     await usuariosControl.buscarEstudianteAcudiente(req, res);
 });

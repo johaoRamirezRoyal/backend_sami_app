@@ -3,6 +3,7 @@ import cors from "cors";
 //import dotenv from "dotenv";
 import RouterUsuarios from "./routes/usuariosRutas.js";
 import RouterPerfil from "./routes/perfilRutas.js";
+import RouterAsistenciaEstudiantes from "./routes/asistenciaEstudiantesRutas.js";
 //import { corsMiddleware } from "./middlewares/cors.js";
 
 // Inicializamos el servidor Express
@@ -33,6 +34,9 @@ app.use("/api/usuarios", RouterUsuarios);
 
 //Rutas para los perfiles
 app.use("/api/perfil", RouterPerfil);
+
+//Rutas para las asistencias de estudiantes
+app.use("/api/asistencias_estudiantes", RouterAsistenciaEstudiantes);
 
 
 //app listen para levantar el servidor
