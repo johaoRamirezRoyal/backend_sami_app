@@ -3,6 +3,7 @@ import UsuariosModel from "../modelos/usuariosModel.js";
 
 export default class AsistenciaEstudiantesControl {
     asistenciaEstudianteModel = new AsistenciaEstudianteModel();
+    usuariosModel = new UsuariosModel();
 
     static instance; 
 
