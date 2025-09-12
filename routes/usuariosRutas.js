@@ -43,4 +43,9 @@ RouterUsuarios.get("/estudiante/:id", async (req, res) => {
     await usuariosControl.buscarEstudianteAcudiente(req, res);
 });
 
+//Obtener un usuario con su documento
+RouterUsuarios.get("/documento/:documento", async (req, res) => {
+    await usuariosControl.getUsuarioConDocumento(req, res);
+});
+
 export default RouterUsuarios;

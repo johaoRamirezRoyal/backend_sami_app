@@ -83,8 +83,8 @@ export default class UsuariosModel {
                         LEFT JOIN nivel n ON n.id = u.id_nivel
                         LEFT JOIN perfiles p ON p.id_perfil = u.perfil 
                         WHERE u.documento = :documento;`;
-        const [[results]] = await connection.execute(query, {documento});
-        return results;
+        const [results] = await connection.execute(query, {documento});
+        return results[0] || null;
     }
     
 }

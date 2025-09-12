@@ -162,4 +162,21 @@ export default class UsuariosControl {
             res.status(500).json({error: err.message});
         }
     }
+
+    async getUsuarioConDocumento(req, res){
+        try{
+            const {documento} = req.params;
+            console.log(documento);
+            
+            if(!documento || documento.trim() === ""){
+                return res.status(400).json({error: "Debe completar el campo de documento"});
+            }
+
+            const data_usuario = await this.usuariosModel.getUsuarioConDocumento(documento);
+            res.status(200).json(data_usuario);
+
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
 }
