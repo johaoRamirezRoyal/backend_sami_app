@@ -75,6 +75,17 @@ export default class UsuariosModel {
         const [results] = await connection.execute(query, {id});
         return results;
     }
+
+    async getUsuarioConDocumento(documento){
+        const tabla = "usuarios";
+        const query = `SELECT u.id_user, u.estado, u.nombre, u.apellido, u.correo, u.perfil, u.id_nivel, u.documento, u.pass, n.nombre AS nom_nivel, p.nombre AS nom_perfil
+                        FROM ${tabla} u 
+                        LEFT JOIN nivel n ON n.id = u.id_nivel
+                        LEFT JOIN perfiles p ON p.id_perfil = u.perfil 
+                        WHERE u.documento = :documento;`;
+        const [[results]] = await connection.execute(query, {documento});
+        return results;
+    }
     
 }
 

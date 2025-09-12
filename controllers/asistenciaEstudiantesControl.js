@@ -1,4 +1,5 @@
 import AsistenciaEstudianteModel from "../modelos/asistenciaEstudianteModel.js";
+import UsuariosModel from "../modelos/usuariosModel.js";
 
 export default class AsistenciaEstudiantesControl {
     asistenciaEstudianteModel = new AsistenciaEstudianteModel();
@@ -38,6 +39,18 @@ export default class AsistenciaEstudiantesControl {
                 return res.status(400).json({error: "Debe completar el campo de id, documento, fecha, hora"});
             }
 
+            //Buscar si el usuario existe
+            const usuario = await this.usuariosModel.getUsuarioConDocumento(documento);
+
+            if(usuario.length === 0){
+                return res.status(400).json({error: "Usuario no encontrado"});
+            }
+
+            //Buscar si el usuario está activo
+            if(usuario.estado !== "activo"){
+                return res.status(400).json({error: "Usuario no activo, habla con el administrador de S. A. M. I"});
+            }
+            
             const asistencia = await this.asistenciaEstudianteModel.registrarAsistenciaEstudiante({documento, fecha_registro, hora_registro});
             res.status(200).json(asistencia);
 

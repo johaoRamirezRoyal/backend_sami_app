@@ -27,9 +27,9 @@ export default class AsistenciaEstudianteModel {
         const query = `SELECT ae.*, concat(u.nombre, ' ', u.apellido) AS nom_user, u.documento, u.correo, c.nombre AS nombre_curso
                         FROM ${tabla} ae 
                         LEFT JOIN usuarios u ON u.documento = ae.documento 
-                        LEFT JOIN cursos c ON c.id = u.id_curso
+                        LEFT JOIN curso c ON u.id_curso = c.id
                         WHERE  DATE(ae.fecha_registro) = CURDATE()
-                        ORDER BY ae.hora_registro DESC; `;
+                        ORDER BY ae.hora_registro DESC;`;
         const [results] = await connection.execute(query);
         return results;
     }
