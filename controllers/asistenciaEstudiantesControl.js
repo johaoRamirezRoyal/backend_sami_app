@@ -43,7 +43,7 @@ export default class AsistenciaEstudiantesControl {
             //Buscar si el usuario existe
             const usuario = await this.usuariosModel.getUsuarioConDocumento(documento);
 
-            if(usuario.length === 0 || !usuario || usuario === null){
+            if(usuario === null){
                 return res.status(400).json({error: "Usuario no encontrado"});
             }
 
