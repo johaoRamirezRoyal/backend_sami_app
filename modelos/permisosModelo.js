@@ -12,4 +12,15 @@ export default class PermisoModel{
             return false;
         }
     }
+
+    async getOpcionesPermisosModel(){
+        const tabla = "cron_opciones";
+        const query = `SELECT SQL_NO_CACHE cr.*,
+                        IF(cm.id = 1 , cr.nombre, CONCAT(cm.nombre,  ' - ', cr.nombre)) AS opcion
+                        FROM ${tabla} cr
+                        LEFT JOIN cron_modulos cm ON cm.id = cr.id_modulo
+                        WHERE cr.activo = 1 ORDER BY opcion ASC;`;
+        const [results] = await connection.execute(query);
+        return results;
+    }
 }

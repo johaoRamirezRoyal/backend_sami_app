@@ -26,4 +26,12 @@ export default class PermisosControl {
         }
     }
 
+    async getOpcionesPermisosControl(req, res){
+        try{
+            const opciones = await this.permisoModel.getOpcionesPermisosModel();
+            res.status(200).json(opciones);
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
 }

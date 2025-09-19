@@ -11,4 +11,9 @@ RouterPermisos.get("/", async (req, res) => {
     await permisosControl.permisosUsuarioControl(req, res);
 });
 
+//Obtener las opciones generales de los permisos
+RouterPermisos.get("/opciones", async (req, res) => {
+    await permisosControl.getOpcionesPermisosControl(req, res);
+});
+
 export default RouterPermisos;
