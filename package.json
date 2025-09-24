@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch app.js",
-    "start": "node app.js"
+    "start": "/opt/cpanel/ea-nodejs**/bin/node app.js"
   },
   "author": "Area de Sistemas del Colegio Real Royal School",
   "license": "ISC",
