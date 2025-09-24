@@ -1,4 +1,4 @@
-import connection from "../database.js";
+import pool from "../database.js";
 
 export default class InventarioModel {
   async getInventarioIdUsuarioModel(id, page = 1, limit = 50) {
@@ -28,14 +28,14 @@ export default class InventarioModel {
                     GROUP BY iv.descripcion
                     ORDER BY iv.descripcion
                     LIMIT :limit OFFSET :offset;`;
-    const [results] = await connection.execute(query, {
+    const [results] = await pool.execute(query, {
       id_user: id,
       limit: Number(limit),
       offset: Number((page - 1) * limit),
     });
 
     const countQuery = `SELECT COUNT(DISTINCT CONCAT(iv.descripcion)) AS total FROM inventario iv WHERE iv.id_user = :id_user AND iv.estado NOT IN (5) AND iv.confirmado NOT IN (2) AND iv.activo = 1;`;
-    const [countResults] = await connection.execute(countQuery, {
+    const [countResults] = await pool.execute(countQuery, {
       id_user: id,
     });
     const total = countResults[0].total;
@@ -61,13 +61,13 @@ export default class InventarioModel {
                         GROUP BY i.descripcion, i.id_area
                         LIMIT :limit
                         OFFSET :offset;`;
-    const [results] = await connection.execute(query, {
+    const [results] = await pool.execute(query, {
       limit: Number(limit),
       offset: Number((page - 1) * limit),
     });
 
     const countQuery = `SELECT COUNT(DISTINCT CONCAT(descripcion, '-', id_area)) AS total FROM ${tabla} WHERE activo = 1 AND estado NOT IN (4, 5, 7, 8, 9, 10) AND confirmado = 1;`;
-    const [countResults] = await connection.execute(countQuery);
+    const [countResults] = await pool.execute(countQuery);
     const total = countResults[0].total;
 
     return {
@@ -100,7 +100,7 @@ export default class InventarioModel {
                         ORDER BY 
                             iv.id DESC
                         LIMIT :limit OFFSET :offset;`;
-    const [results] = await connection.execute(query, {
+    const [results] = await pool.execute(query, {
       limit: Number(limit),
       offset: Number((page - 1) * limit),
     });
@@ -123,7 +123,7 @@ export default class InventarioModel {
                         observacion = :observacion
                         WHERE id = :id_inventario AND id_area = :id_area AND id_user = :id_user
                         AND estado NOT IN (2, 4, 5, 6, 10);`;
-    const [results] = await connection.execute(query, {
+    const [results] = await pool.execute(query, {
       estado: Number(datos.estado),
       observacion: datos.observacion || "",
       id_inventario: Number(datos.id_inventario),
