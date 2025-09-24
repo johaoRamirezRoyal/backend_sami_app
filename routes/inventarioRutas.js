@@ -7,12 +7,23 @@ const RouterInventario = new Router();
 const inventarioControl = new InventarioControl();
 
 //Obtener inventario de un usuario
-RouterInventario.get("/:id", async (req, res) => {
+RouterInventario.get("/usuario/:id", async (req, res) => {
     await inventarioControl.getInventarioIdUsuarioControl(req, res);
 });
 
+//Obtener todo el inventario paginado
 RouterInventario.get("/", async (req, res) => {
     await inventarioControl.getInventarioGeneralControl(req, res);
+});
+
+//Reportar un articulo con el id de inventario
+RouterInventario.post("/reportar", async (req, res) => {
+    await inventarioControl.reportarArticuloIdControl(req, res);
+});
+
+//Ver información de un articulo con el id de inventario
+RouterInventario.get("/articulo/:id", async (req, res) => {
+    await inventarioControl.getDatosArticuloControl(req, res);
 });
 
 export default RouterInventario;
