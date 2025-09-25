@@ -9,7 +9,7 @@ export default class UsuariosModel {
                         FROM ${tabla} 
                         WHERE estado = 'activo' AND perfil NOT IN (1, 6, 17)
                         ORDER BY id_user ASC LIMIT :limite;`;
-        const [results] = await connection.execute(query, {limite: cantidad});
+        const [results] = await connection.query(query, {limite: cantidad});
         return results;
     }
 

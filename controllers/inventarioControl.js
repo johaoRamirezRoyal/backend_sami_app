@@ -57,28 +57,34 @@ export default class InventarioControl {
       id_area,
       id_user,
     };
-
+    
     try {
-      const result_reporte = await this.inventarioModel.reportarArticuloIdModel(
-        data
-      );
+      const result_reporte = await this.inventarioModel.reportarArticuloIdModel(data);
+      console.log(result_reporte);
 
       if (result_reporte.success) {
         const result_reporte_log =
           await this.inventarioModel.insertarReporteModel(data);
         if (result_reporte_log.success) {
-          res.status(200).json(result_reporte);
+          return res.status(200).json(result_reporte);
         } else {
-          res
+          return res
             .status(500)
             .json({
               error: result_reporte_log.message,
               data: result_reporte_log.data,
             });
         }
+      } else {
+        return res
+        .status(500)
+        .json({
+          error: result_reporte.message,
+          data: result_reporte.data,
+        });
       }
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
