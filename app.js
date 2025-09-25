@@ -19,6 +19,7 @@ app.disable("x-powered-by");
 
 //Constante para el puerto del servidor
 const PORT = process.env.PORT || 3000;
+const hostname = process.env.HOSTNAME || "http://samiappreal.royalschool.edu.co/";
 
 // Formatear la respuesta o requires de los formularios o inputs
 app.use(express.json());
@@ -47,7 +48,7 @@ app.use("/api/permisos", RouterPermisos);
 app.use("/api/inventario", RouterInventario);
 
 //app listen para levantar el servidor
-app.listen(PORT, () => {
+app.listen(PORT, hostname, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
 

@@ -123,101 +123,141 @@ export default class InventarioModel {
                         observacion = :observacion
                         WHERE id = :id_inventario AND id_area = :id_area AND id_user = :id_user
                         AND estado NOT IN (2, 4, 5, 6, 10);`;
-    const [results] = await connection.execute(query, {
-      estado: Number(datos.estado),
-      observacion: datos.observacion || "",
-      id_inventario: Number(datos.id_inventario),
-      id_area: Number(datos.id_area),
-      id_user: Number(datos.id_user),
-    });
 
-    if (results.affectedRows === 0) {
+    try {
+      const [results] = await connection.query(query, {
+        estado: datos.estado,
+        observacion: datos.observacion || "",
+        id_inventario: datos.id_inventario,
+        id_area: datos.id_area,
+        id_user: datos.id_user,
+      });
+
+      if (results.affectedRows !== 0) {
+        return {
+          success: true,
+          message: "Reporte exitoso",
+          data: {
+            id_user: datos.id_user,
+            id_area: datos.id_area,
+            id_inventario: datos.id_inventario,
+            estado: datos.estado,
+            observacion: datos.observacion || "",
+          },
+        };
+      }
       return {
         success: false,
-        message: "No se pudo reportar el articulo",
+        message: "No se pudo reportar el artículo (ninguna fila actualizada)",
         data: {
           id_user: datos.id_user,
           id_area: datos.id_area,
           id_inventario: datos.id_inventario,
+          estado: datos.estado,
+          observacion: datos.observacion || "",
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "No se pudo reportar el articulo",
+        error: error.message,
+        data: {
+          id_user: datos.id_user,
+          id_area: datos.id_area,
+          id_inventario: datos.id_inventario,
+          estado: datos.estado,
+          observacion: datos.observacion || "",
         },
       };
     }
-    return {
-      success: true,
-      message: "Reporte exitoso",
-      data: {
-        id_user: datos.id_user,
-        id_area: datos.id_area,
-        id_inventario: datos.id_inventario,
-        estado: datos.estado,
-        observacion: datos.observacion || "",
-      },
-    };
   }
 
   async insertarReporteModel(datos) {
     const tabla = "reportes";
     const query_insert = `INSERT INTO ${tabla} (id_inventario, observacion, estado, id_log, tipo_reporte, id_user, id_area, fechareg)
                                 VALUES (:id_inventario, :observacion, :estado, :id_log, :tipo_reporte, :id_user, :id_area, :fechareg);`;
-    const [results] = await connection.execute(query_insert, {
-      id_inventario: Number(datos.id_inventario),
-      observacion: datos.observacion || "",
-      estado: Number(datos.estado),
-      id_log: Number(datos.id_log) || Number(datos.id_user),
-      tipo_reporte: Number(datos.tipo_reporte) || 1,
-      id_user: Number(datos.id_user),
-      id_area: Number(datos.id_area),
-      fechareg: datos.fechareg || new Date().toLocaleString("sv-SE", {timeZone: "America/Bogota"}).slice(0, 19).replace('T', ' '),
-    });
 
-    if (results.affectedRows === 0) {
-      return {
-        success: false,
-        message: "No se pudo insertar el reporte",
-        data: {
-          id_user: datos.id_user,
-          id_area: datos.id_area,
-          id_inventario: datos.id_inventario,
-        },
-      };
-    }
-    const query_log = `INSERT INTO inventario_log (id_inventario, id_user, id_area, id_log, estado)
-                                VALUES (:id_inventario, :id_user, :id_area, :id_log, :estado);`;
 
-    const [results_log] = await connection.execute(query_log, {
-      id_inventario: Number(datos.id_inventario),
-      id_user: Number(datos.id_user),
-      id_area: Number(datos.id_area),
-      id_log: Number(datos.id_log) || Number(datos.id_user),
-      estado: Number(datos.estado),
-    });
-
-    if (results_log.affectedRows === 0) {
-      return {
-        success: false,
-        message: "No se pudo insertar el reporte al registro de inventario log",
-        data: {
-          id_user: datos.id_user,
-          id_area: datos.id_area,
-          id_inventario: datos.id_inventario,
-        },
-      };
-    }
+    try{
+      const [results] = await connection.execute(query_insert, {
+        id_inventario: Number(datos.id_inventario),
+        observacion: datos.observacion || "",
+        estado: Number(datos.estado),
+        id_log: Number(datos.id_log) || Number(datos.id_user),
+        tipo_reporte: Number(datos.tipo_reporte) || 1,
+        id_user: Number(datos.id_user),
+        id_area: Number(datos.id_area),
+        fechareg:
+          datos.fechareg ||
+          new Date()
+            .toLocaleString("sv-SE", { timeZone: "America/Bogota" })
+            .slice(0, 19)
+            .replace("T", " "),
+      });
     
-    return {
-      success: true,
-      message: "Reporte exitoso",
-      data: {
-        id_user: datos.id_user,
-        id_area: datos.id_area,
-        id_inventario: datos.id_inventario,
-        estado: datos.estado,
-        observacion: datos.observacion?.trim() || "",
-      },
-    };
+      if (results.affectedRows === 0) {
+        return {
+          success: false,
+          message: "No se pudo insertar el reporte",
+          data: {
+            id_user: datos.id_user,
+            id_area: datos.id_area,
+            id_inventario: datos.id_inventario,
+          },
+        };
+      }
+      const query_log = `INSERT INTO inventario_log (id_inventario, id_user, id_area, id_log, estado)
+                                  VALUES (:id_inventario, :id_user, :id_area, :id_log, :estado);`;
+  
+      const [results_log] = await connection.execute(query_log, {
+        id_inventario: Number(datos.id_inventario),
+        id_user: Number(datos.id_user),
+        id_area: Number(datos.id_area),
+        id_log: Number(datos.id_log) || Number(datos.id_user),
+        estado: Number(datos.estado),
+      });
+  
+      if (results_log.affectedRows === 0) {
+        return {
+          success: false,
+          message: "No se pudo insertar el reporte al registro de inventario log",
+          data: {
+            id_user: datos.id_user,
+            id_area: datos.id_area,
+            id_inventario: datos.id_inventario,
+          },
+        };
+      }
+
+      return {
+        success: true,
+        message: "Reporte exitoso",
+        data: {
+          id_user: datos.id_user,
+          id_area: datos.id_area,
+          id_inventario: datos.id_inventario,
+          estado: datos.estado,
+          observacion: datos.observacion?.trim() || "",
+        },
+      };
+    }catch(error){
+      return {
+        success: false,
+        message: "No se pudo reportar el artículo",
+        error: error.message,
+        data: {
+          id_user: datos.id_user,
+          id_area: datos.id_area,
+          id_inventario: datos.id_inventario,
+          estado: datos.estado,
+          observacion: datos.observacion?.trim() || "",
+        },
+      }
+    }
   }
 
-  async getDatosArticuloModel(id){
+  async getDatosArticuloModel(id) {
     const tabla = "inventario";
     const query = `SELECT i.*, concat(u.apellido,' ', u.nombre) AS usuario, a.nombre AS area, 
                         c.nombre AS nom_categoria, ev.nombre AS evidencia, 
@@ -230,19 +270,18 @@ export default class InventarioModel {
                     LEFT JOIN categoria c ON c.id = i.id_categoria 
                     LEFT JOIN evidencias ev ON ev.id_inventario = i.id 
                     WHERE i.id = :id`;
-      const [results] = await connection.execute(query, {id: Number(id)});
-      if(results.length === 0){
-        return {
-          success: false,
-          message: "No se encontró el articulo",
-          data: null,
-        };
-      }
+    const [results] = await connection.execute(query, { id: Number(id) });
+    if (results.length === 0) {
       return {
-        success: true,
-        message: "Articulo encontrado",
-        data: results[0],
+        success: false,
+        message: "No se encontró el articulo",
+        data: null,
       };
+    }
+    return {
+      success: true,
+      message: "Articulo encontrado",
+      data: results[0],
+    };
   }
-
 }
