@@ -9,9 +9,9 @@ export default class UsuariosModel {
                         FROM ${tabla} 
                         WHERE estado = 'activo' AND perfil NOT IN (1, 6, 17)
                         ORDER BY id_user ASC LIMIT :limite;`;
-        const [results] = await connection.execute(query, {limite: cantidad});
-        return results;
-    }
+        const [results] = await connection.query(query, {limite: cantidad});
+        return results;
+    }
 
     //Obtener un usuario mediante su user
     async getUsuarioUser(user){

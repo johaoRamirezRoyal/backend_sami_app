@@ -28,7 +28,7 @@ export default class InventarioModel {
                     GROUP BY iv.descripcion
                     ORDER BY iv.descripcion
                     LIMIT :limit OFFSET :offset;`;
-    const [results] = await connection.execute(query, {
+    const [results] = await connection.query(query, {
       id_user: id,
       limit: Number(limit),
       offset: Number((page - 1) * limit),
@@ -48,7 +48,7 @@ export default class InventarioModel {
       data: results,
     };
   }
-
+  
   async getInventarioGeneralModel(page = 1, limit = 50) {
     const tabla = "inventario";
     const query = `SELECT i.*, concat(u.apellido,' ', u.nombre) AS user_name, c.nombre AS nombre_categoria, e.nombre AS estado, a.nombre AS nom_area, count(i.id) AS cantidad
