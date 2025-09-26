@@ -48,7 +48,7 @@ app.use("/api/permisos", RouterPermisos);
 app.use("/api/inventario", RouterInventario);
 
 //app listen para levantar el servidor
-app.listen(PORT, hostname, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
 
