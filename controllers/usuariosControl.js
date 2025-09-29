@@ -146,8 +146,11 @@ export default class UsuariosControl {
                 estado: usuario_sesion.estado
             }
 
-            const token = jwt.sign(payload, process.env.SECRET, {
-                expiresIn: process.env.EXPIRES_IN
+            const EXPIRES_IN = process.env.EXPIRES_IN || "15d";
+            const SECRET = process.env.SECRET || "samiroyal";
+
+            const token = jwt.sign(payload, SECRET, {
+                expiresIn: EXPIRES_IN
             });
 
             res.status(200).json(
