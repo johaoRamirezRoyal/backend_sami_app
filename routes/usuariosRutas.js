@@ -28,6 +28,13 @@ RouterUsuarios.post("/login", async (req, res) => {
     await usuariosControl.iniciarSesion(req, res);
 });
 
+//Obtener usuario mediante nombre o documento
+RouterUsuarios.get("/filtro", async (req, res) => {
+    console.log("Entró al endpoint /filtro");
+    await usuariosControl.getUsuarioPorNombre(req, res);
+    console.log("Terminó petición");
+});
+
 //Ruta para acceder a un usuario con su ID
 RouterUsuarios.get("/:id_user", async (req, res) => {
     await usuariosControl.buscarUsuarioID(req, res);
@@ -47,5 +54,6 @@ RouterUsuarios.get("/estudiante/:id", async (req, res) => {
 RouterUsuarios.get("/documento/:documento", async (req, res) => {
     await usuariosControl.getUsuarioConDocumento(req, res);
 });
+
 
 export default RouterUsuarios;

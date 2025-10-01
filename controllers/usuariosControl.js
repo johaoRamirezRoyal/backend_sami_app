@@ -182,4 +182,24 @@ export default class UsuariosControl {
             res.status(500).json({error: err.message});
         }
     }
+
+    async getUsuarioPorNombre(req, res) {
+        try {
+            const { nombre } = req.query;
+            console.log("Nombre recibido:", nombre);
+
+            if (!nombre) {
+                return res.status(400).json({ error: "Debe completar el campo de nombre" });
+            }
+
+            const data_usuario = await this.usuariosModel.getUsuarioPorNombre(nombre);
+            console.log("Resultados DB:", data_usuario);
+
+            res.status(200).json(data_usuario);
+
+        } catch (err) {
+            console.error("Error:", err);
+            res.status(500).json({ error: err.message });
+        }
+    }
 }

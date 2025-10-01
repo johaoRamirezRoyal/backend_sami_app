@@ -86,6 +86,16 @@ export default class UsuariosModel {
         const [results] = await connection.execute(query, {documento});
         return results[0] || null;
     }
-    
+
+    async getUsuarioPorNombre(nombre) {
+        const tabla = "usuarios";
+        const query = `
+            SELECT * 
+            FROM ${tabla} 
+            WHERE CONCAT(nombre, ' ', apellido, ' ', documento) LIKE ?;
+        `;
+        const [results] = await connection.execute(query, [`%${nombre}%`]);
+        return results;
+    }
 }
 
