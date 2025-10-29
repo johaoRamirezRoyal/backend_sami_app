@@ -6,6 +6,9 @@ import RouterPerfil from "./routes/perfilRutas.js";
 import RouterAsistenciaEstudiantes from "./routes/asistenciaEstudiantesRutas.js";
 import RouterPermisos from "./routes/permisosRutas.js";
 import RouterInventario from "./routes/inventarioRutas.js";
+import RouterReportes from "./routes/reportesRutas.js";
+import RouterActividadesMensajero from "./routes/actividadesMensajeroRutas.js";
+
 //import { corsMiddleware } from "./middlewares/cors.js";
 
 // Inicializamos el servidor Express
@@ -46,6 +49,12 @@ app.use("/api/permisos", RouterPermisos);
 
 //Rutas para el inventario
 app.use("/api/inventario", RouterInventario);
+
+//Rutas para los reportes
+app.use("/api/reportes", RouterReportes);
+
+//Rutas para las actividades mensajero
+app.use("/api/actividades_mensajero", RouterActividadesMensajero);
 
 //app listen para levantar el servidor
 app.listen(PORT, () => {
