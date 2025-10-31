@@ -103,4 +103,34 @@ export default class ActividadesMensajeroControl {
     }
   }
 
+  async actualizarActividadMensajeroControl(req, res) {
+    const { id, actividad, fecha_inicio, fecha_final, observacion, estado } = req.body;
+
+    if (!id || !actividad || !fecha_inicio || !fecha_final || !estado) {
+      res
+        .status(400)
+        .json({ error: "Falta parámetros en la petición", data: req.body });
+      return;
+    }
+
+    const data = {
+      id,
+      actividad,
+      fecha_inicio,
+      fecha_final,
+      observacion,
+      estado,
+    };
+
+    try {
+      const result =
+        await this.actividadesMensajeroModel.actualizarActividadMensajero(
+          data
+        );
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
 }
