@@ -26,4 +26,9 @@ RouterActividadesMensajero.get("/id/:id", async (req, res) => {
     await actividadesMensajeroControl.getActividadesMensajeroIDControl(req, res);
 });
 
+//Actualizar actividades mensajero de un usuario
+RouterActividadesMensajero.put("/actualizar/:id", async (req, res) => {
+    await actividadesMensajeroControl.actualizarActividadMensajeroControl(req, res);
+});
+
 export default RouterActividadesMensajero;

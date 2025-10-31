@@ -63,4 +63,18 @@ export default class ActividadesMensajeroModel {
     }
     
 
+    async actualizarActividadMensajero(datos){
+        const tabla = "actividades_mensajero";
+        const query = `UPDATE ${tabla} SET actividad = :actividad, fecha_inicio = :fecha_inicio, fecha_final = :fecha_final, observacion = :observacion, estado = :estado WHERE id = :id;`;
+        const [results] = await connection.execute(query, datos);
+        if(results.affectedRows > 0){
+            return {message: "Actualizacion exitosa de actividades mensajero!", success: true};
+        }else{
+            return {
+                message: "No se pudo actualizar la actividad mensajero!",
+                success: false,
+            };
+        }
+    }
+
 }
