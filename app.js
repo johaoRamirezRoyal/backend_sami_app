@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3000;
 const hostname = process.env.HOSTNAME || "http://samiappreal.royalschool.edu.co/";
 
 // Formatear la respuesta o requires de los formularios o inputs
-app.use(express.json());
+app.use(express.json({ limit: '20mb' })); // Ajusta el límite según lo que necesites
 
 // Configuramos el servidor para usar CORS middleware
 app.use(cors());
