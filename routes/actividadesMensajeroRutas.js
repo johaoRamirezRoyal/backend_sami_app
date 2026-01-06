@@ -7,12 +7,12 @@ const RouterActividadesMensajero = new Router();
 const actividadesMensajeroControl = new ActividadesMensajeroControl();
 
 //Obtener actividades mensajero de un usuario
-RouterActividadesMensajero.get("/usuario/:id", async (req, res) => {
+RouterActividadesMensajero.get("/", async (req, res) => {
     await actividadesMensajeroControl.getActividadesMensajeroControl(req, res);
 });
 
 //Registrar actividades mensajero de un usuario
-RouterActividadesMensajero.post("/usuario/:id", async (req, res) => {
+RouterActividadesMensajero.post("/", async (req, res) => {
     await actividadesMensajeroControl.registrarActividadesMensajeroControl(req, res);
 });
 

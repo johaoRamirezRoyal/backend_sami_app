@@ -6,13 +6,7 @@ export default class ActividadesMensajeroControl {
   }
 
   async getActividadesMensajeroControl(req, res) {
-    const { id } = req.params;
     const { page, limit } = req.query || { page: 1, limit: 50 };
-
-    if (!id) {
-      res.status(400).json({ error: "Falta el id de la actividad" });
-      return;
-    }
 
     try {
       const result =
@@ -36,7 +30,7 @@ export default class ActividadesMensajeroControl {
       estado,
     } = req.body;
 
-    if (!id_user || !actividad || !fecha_inicio || !fecha_final || !estado) {
+    if (!id_user || !actividad || !fecha_inicio || !fecha_final || !estado ) {
       res
         .status(400)
         .json({ error: "Falta parámetros en la petición", data: req.body });

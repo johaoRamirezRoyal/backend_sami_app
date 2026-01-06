@@ -33,16 +33,21 @@ export default class ActividadesMensajeroModel {
 
     async obtenerActividadesMensajero(page = 1, limit = 50){
         const tabla = "actividades_mensajero";
-        const query = `SELECT am.*, u.nombre AS nombre_usuario
-                        (SELECT nombre FROM usuarios u WHERE u.id_user = a.id_user) AS nombre_usuario,
-                        FROM ${tabla} am
-                        LEFT JOIN usuarios u ON u.id_user = am.id_user
-                        ORDER BY a.fecha_inicio DESC
-                        LIMIT :limit OFFSET :offset;`;
-        const [results] = await connection.execute(query, {
-              limit: Number(limit),
-              offset: Number((page - 1) * limit),
-        });
+        const offset = (page - 1) * limit;
+
+        const query = `
+            SELECT am.*, u.nombre AS nombre_usuario
+            FROM ${tabla} am
+            LEFT JOIN usuarios u ON u.id_user = am.id_user
+            ORDER BY am.fecha_inicio DESC
+            LIMIT ? OFFSET ?;
+        `;
+
+        // ✅ Como activaste `namedPlaceholders: true`, ya puedes usar parámetros con nombre
+        const [results] = await connection.query(query, [
+            limit,
+            offset,
+        ]);
 
         const countQuery = `SELECT COUNT(DISTINCT a.id) AS total FROM ${tabla} a;`;
         const [countResults] = await connection.execute(countQuery);
@@ -56,6 +61,7 @@ export default class ActividadesMensajeroModel {
             data: results,
         };
     }
+    
 
     async actualizarActividadMensajero(datos){
         const tabla = "actividades_mensajero";
