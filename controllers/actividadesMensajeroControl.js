@@ -96,7 +96,8 @@ export default class ActividadesMensajeroControl {
       return;
     }
     try {
-      const result = await this.actividadesMensajeroModel.getActividadesMensajeroID(id);
+      const result =
+        await this.actividadesMensajeroModel.getActividadesMensajeroID(id);
       res.status(200).json(result);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -104,7 +105,8 @@ export default class ActividadesMensajeroControl {
   }
 
   async actualizarActividadMensajeroControl(req, res) {
-    const { id, actividad, fecha_inicio, fecha_final, observacion, estado } = req.body;
+    const { id, actividad, fecha_inicio, fecha_final, observacion, estado } =
+      req.body;
 
     if (!id || !actividad || !fecha_inicio || !fecha_final || !estado) {
       res
@@ -124,13 +126,10 @@ export default class ActividadesMensajeroControl {
 
     try {
       const result =
-        await this.actividadesMensajeroModel.actualizarActividadMensajero(
-          data
-        );
+        await this.actividadesMensajeroModel.actualizarActividadMensajero(data);
       res.status(200).json(result);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
 }
