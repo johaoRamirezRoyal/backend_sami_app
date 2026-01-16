@@ -1,4 +1,11 @@
-import serverless from "serverless-http";
-import app from "../../app.js";
-console.log("ESM API FUNCTION LOADED");
-export const handler = serverless(app);
+const serverless = require("serverless-http");
+
+let cachedHandler;
+
+exports.handler = async (event, context) => {
+  if (!cachedHandler) {
+    const { default: app } = await import("../../app.js");
+    cachedHandler = serverless(app);
+  }
+  return cachedHandler(event, context);
+};
