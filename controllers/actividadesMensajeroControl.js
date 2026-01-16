@@ -1,129 +1,112 @@
 import ActividadesMensajeroModel from "../modelos/actividadesMensajeroModel.js";
 
-export default class ActividadesMensajeroControl {
-  constructor() {
-    this.actividadesMensajeroModel = new ActividadesMensajeroModel();
+const actividadesMensajeroModel = new ActividadesMensajeroModel();
+
+export async function getActividadesMensajeroControl(req, res) {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 50;
+
+  try {
+    const result = await actividadesMensajeroModel.obtenerActividadesMensajero(
+      page,
+      limit
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export async function registrarActividadesMensajeroControl(req, res) {
+  const { id_user, actividad, fecha_inicio, fecha_final, observacion, estado } =
+    req.body;
+
+  if (!id_user || !actividad || !fecha_inicio || !fecha_final || !estado) {
+    return res
+      .status(400)
+      .json({ error: "Faltan parámetros en la petición", data: req.body });
   }
 
-  async getActividadesMensajeroControl(req, res) {
-    const { page, limit } = req.query || { page: 1, limit: 50 };
+  try {
+    const result =
+      await actividadesMensajeroModel.registrarActividadesMensajero({
+        id_user,
+        actividad,
+        fecha_inicio,
+        fecha_final,
+        observacion,
+        estado,
+      });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 
-    try {
-      const result =
-        await this.actividadesMensajeroModel.obtenerActividadesMensajero(
-          page,
-          limit
-        );
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+export async function registrarEvidenciaActividadesMensajeroControl(req, res) {
+  const { id, evidencia } = req.body;
+
+  if (!id || !evidencia) {
+    return res
+      .status(400)
+      .json({ error: "Faltan parámetros en la petición", data: req.body });
   }
 
-  async registrarActividadesMensajeroControl(req, res) {
-    const {
-      id_user,
-      actividad,
-      fecha_inicio,
-      fecha_final,
-      observacion,
-      estado,
-    } = req.body;
+  try {
+    const base64Data = evidencia.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
 
-    if (!id_user || !actividad || !fecha_inicio || !fecha_final || !estado ) {
-      res
-        .status(400)
-        .json({ error: "Falta parámetros en la petición", data: req.body });
-      return;
-    }
+    const result =
+      await actividadesMensajeroModel.registrarEvidenciaActividadesMensajero({
+        id,
+        evidencia: buffer,
+      });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 
-    const data = {
-      id_user,
-      actividad,
-      fecha_inicio,
-      fecha_final,
-      observacion,
-      estado,
-    };
+export async function getActividadesMensajeroIDControl(req, res) {
+  const { id } = req.params;
 
-    try {
-      const result =
-        await this.actividadesMensajeroModel.registrarActividadesMensajero(
-          data
-        );
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  if (!id) {
+    return res.status(400).json({ error: "Falta el id de la actividad" });
   }
 
-  async registrarEvidenciaActividadesMensajeroControl(req, res) {
-    const { id, evidencia } = req.body;
+  try {
+    const result = await actividadesMensajeroModel.getActividadesMensajeroID(
+      id
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 
-    if (!id || !evidencia) {
-      return res
-        .status(400)
-        .json({ error: "Faltan parámetros en la petición", data: req.body });
-    }
+export async function actualizarActividadMensajeroControl(req, res) {
+  const { id, actividad, fecha_inicio, fecha_final, observacion, estado } =
+    req.body;
 
-    try {
-      // Quita el prefijo si existe (ejemplo: data:image/png;base64,)
-      const base64Data = evidencia.replace(/^data:image\/\w+;base64,/, "");
-      const buffer = Buffer.from(base64Data, "base64");
-
-      const data = { id, evidencia: buffer };
-
-      const result =
-        await this.actividadesMensajeroModel.registrarEvidenciaActividadesMensajero(
-          data
-        );
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  if (!id || !actividad || !fecha_inicio || !fecha_final || !estado) {
+    return res
+      .status(400)
+      .json({ error: "Faltan parámetros en la petición", data: req.body });
   }
 
-  async getActividadesMensajeroIDControl(req, res) {
-    const { id } = req.params;
-    if (!id) {
-      res.status(400).json({ error: "Falta el id de la actividad" });
-      return;
-    }
-    try {
-      const result =
-        await this.actividadesMensajeroModel.getActividadesMensajeroID(id);
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  async actualizarActividadMensajeroControl(req, res) {
-    const { id, actividad, fecha_inicio, fecha_final, observacion, estado } =
-      req.body;
-
-    if (!id || !actividad || !fecha_inicio || !fecha_final || !estado) {
-      res
-        .status(400)
-        .json({ error: "Falta parámetros en la petición", data: req.body });
-      return;
-    }
-
-    const data = {
-      id,
-      actividad,
-      fecha_inicio,
-      fecha_final,
-      observacion,
-      estado,
-    };
-
-    try {
-      const result =
-        await this.actividadesMensajeroModel.actualizarActividadMensajero(data);
-      res.status(200).json(result);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  try {
+    const result = await actividadesMensajeroModel.actualizarActividadMensajero(
+      {
+        id,
+        actividad,
+        fecha_inicio,
+        fecha_final,
+        observacion,
+        estado,
+      }
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
