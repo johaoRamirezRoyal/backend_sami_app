@@ -1,44 +1,54 @@
-import connection from "../database.js";
+import { getPool } from "../database.js";
 
 export default class InventarioModel {
   async getInventarioIdUsuarioModel(id, page = 1, limit = 50) {
-    const tabla = "inventario";
-    const query = `SELECT iv.*,
-                        COUNT(iv.id) AS cantidad,
-                        CONCAT(u.nombre, ' ', u.apellido) AS usuario,
-                        a.nombre AS area,
-                        h.frecuencia_mantenimiento AS frecuencia,
-                        e.nombre AS nombre_estado,
-                        COALESCE(r.ultimo_mant, iv.fechareg) AS ultimo_mant
-                    FROM ${tabla} iv
-                    LEFT JOIN usuarios u ON u.id_user = iv.id_user
-                    LEFT JOIN areas a ON a.id = iv.id_area
-                    LEFT JOIN hoja_vida h ON h.id_inventario = iv.id
-                    LEFT JOIN estado e ON e.id = iv.estado
-                    LEFT JOIN (
-                        SELECT r1.id_inventario, MAX(r1.fechareg) AS ultimo_mant
-                        FROM reportes r1
-                        WHERE r1.estado = 6
-                        GROUP BY r1.id_inventario
-                    ) r ON r.id_inventario = iv.id
-                    WHERE iv.id_user = :id_user
-                    AND iv.estado NOT IN (5)
-                    AND iv.confirmado NOT IN (2)
-                    AND iv.activo = 1
-                    GROUP BY iv.descripcion
-                    ORDER BY iv.descripcion
-                    LIMIT :limit OFFSET :offset;`;
-    const [results] = await connection.query(query, {
-      id_user: id,
-      limit: Number(limit),
-      offset: Number((page - 1) * limit),
-    });
+    const pool = getPool();
+    const offset = (page - 1) * limit;
 
-    const countQuery = `SELECT COUNT(DISTINCT CONCAT(iv.descripcion)) AS total FROM inventario iv WHERE iv.id_user = :id_user AND iv.estado NOT IN (5) AND iv.confirmado NOT IN (2) AND iv.activo = 1;`;
-    const [countResults] = await connection.execute(countQuery, {
-      id_user: id,
-    });
-    const total = countResults[0].total;
+    const query = `
+      SELECT iv.*,
+             COUNT(iv.id) AS cantidad,
+             CONCAT(u.nombre, ' ', u.apellido) AS usuario,
+             a.nombre AS area,
+             h.frecuencia_mantenimiento AS frecuencia,
+             e.nombre AS nombre_estado,
+             COALESCE(r.ultimo_mant, iv.fechareg) AS ultimo_mant
+      FROM inventario iv
+      LEFT JOIN usuarios u ON u.id_user = iv.id_user
+      LEFT JOIN areas a ON a.id = iv.id_area
+      LEFT JOIN hoja_vida h ON h.id_inventario = iv.id
+      LEFT JOIN estado e ON e.id = iv.estado
+      LEFT JOIN (
+          SELECT r1.id_inventario, MAX(r1.fechareg) AS ultimo_mant
+          FROM reportes r1
+          WHERE r1.estado = 6
+          GROUP BY r1.id_inventario
+      ) r ON r.id_inventario = iv.id
+      WHERE iv.id_user = ?
+        AND iv.estado NOT IN (5)
+        AND iv.confirmado NOT IN (2)
+        AND iv.activo = 1
+      GROUP BY iv.descripcion
+      ORDER BY iv.descripcion
+      LIMIT ? OFFSET ?
+    `;
+
+    const [results] = await pool.query(query, [
+      id,
+      Number(limit),
+      Number(offset),
+    ]);
+
+    const countQuery = `
+      SELECT COUNT(DISTINCT iv.descripcion) AS total
+      FROM inventario iv
+      WHERE iv.id_user = ?
+        AND iv.estado NOT IN (5)
+        AND iv.confirmado NOT IN (2)
+        AND iv.activo = 1
+    `;
+
+    const [[{ total }]] = await pool.query(countQuery, [id]);
 
     return {
       total,
@@ -48,9 +58,11 @@ export default class InventarioModel {
       data: results,
     };
   }
-  
+
+
   async getInventarioGeneralModel(page = 1, limit = 50) {
     const tabla = "inventario";
+    let pool = getPool();
     const query = `SELECT i.*, concat(u.apellido,' ', u.nombre) AS user_name, c.nombre AS nombre_categoria, e.nombre AS estado, a.nombre AS nom_area, count(i.id) AS cantidad
                         FROM ${tabla} i 
                         LEFT JOIN usuarios u ON u.id_user = i.id_user
@@ -59,15 +71,15 @@ export default class InventarioModel {
                         LEFT JOIN areas a ON a.id = i.id_area 
                         WHERE i.activo = 1 AND i.estado NOT IN (4, 5, 7, 8, 9, 10) AND i.confirmado = 1 
                         GROUP BY i.descripcion, i.id_area
-                        LIMIT :limit
-                        OFFSET :offset;`;
-    const [results] = await connection.execute(query, {
-      limit: Number(limit),
-      offset: Number((page - 1) * limit),
-    });
+                        LIMIT ?
+                        OFFSET ?;`;
+    const [results] = await pool.query(query, [
+      Number(limit),
+      Number((page - 1) * limit),
+    ]);
 
     const countQuery = `SELECT COUNT(DISTINCT CONCAT(descripcion, '-', id_area)) AS total FROM ${tabla} WHERE activo = 1 AND estado NOT IN (4, 5, 7, 8, 9, 10) AND confirmado = 1;`;
-    const [countResults] = await connection.execute(countQuery);
+    const [countResults] = await pool.query(countQuery);
     const total = countResults[0].total;
 
     return {
@@ -81,6 +93,7 @@ export default class InventarioModel {
 
   async getInventarioDetalleListadoModel(page = 1, limit = 50) {
     const tabla = "inventario";
+    let pool = getPool();
     const query = `SELECT 
                             iv.*,
                             e.nombre AS estado_nombre,
@@ -99,13 +112,13 @@ export default class InventarioModel {
                             iv.descripcion , u.nombre, u.apellido, a.nombre -- iv.marca, iv.modelo, e.nombre, iv.estado,
                         ORDER BY 
                             iv.id DESC
-                        LIMIT :limit OFFSET :offset;`;
-    const [results] = await connection.execute(query, {
-      limit: Number(limit),
-      offset: Number((page - 1) * limit),
-    });
+                        LIMIT ? OFFSET ?;`;
+    const [results] = await pool.query(query, [
+      Number(limit),
+      Number((page - 1) * limit),
+    ]);
     const countQuery = `SELECT COUNT(DISTINCT CONCAT(iv.descripcion, '-', u.nombre, '-', u.apellido, '-', a.nombre)) AS total FROM inventario iv LEFT JOIN usuarios u ON u.id_user = iv.id_user LEFT JOIN areas a ON a.id = iv.id_area WHERE iv.activo = 1 AND iv.estado NOT IN (4, 5);`;
-    const [countResults] = await connection.execute(countQuery);
+    const [countResults] = await pool.query(countQuery);
     const total = countResults[0].total;
     return {
       total,
@@ -118,6 +131,7 @@ export default class InventarioModel {
 
   async reportarArticuloIdModel(datos) {
     const tabla = "inventario";
+    let pool = getPool();
     const query = `UPDATE ${tabla} SET 
                         estado = :estado, 
                         observacion = :observacion
@@ -125,7 +139,7 @@ export default class InventarioModel {
                         AND estado NOT IN (2, 4, 5, 6, 10);`;
 
     try {
-      const [results] = await connection.query(query, {
+      const [results] = await pool.query(query, {
         estado: datos.estado,
         observacion: datos.observacion || "",
         id_inventario: datos.id_inventario,
@@ -175,12 +189,12 @@ export default class InventarioModel {
 
   async insertarReporteModel(datos) {
     const tabla = "reportes";
+    let pool = getPool();
     const query_insert = `INSERT INTO ${tabla} (id_inventario, observacion, estado, id_log, tipo_reporte, id_user, id_area, fechareg)
                                 VALUES (:id_inventario, :observacion, :estado, :id_log, :tipo_reporte, :id_user, :id_area, :fechareg);`;
 
-
-    try{
-      const [results] = await connection.execute(query_insert, {
+    try {
+      const [results] = await pool.execute(query_insert, {
         id_inventario: Number(datos.id_inventario),
         observacion: datos.observacion || "",
         estado: Number(datos.estado),
@@ -195,7 +209,7 @@ export default class InventarioModel {
             .slice(0, 19)
             .replace("T", " "),
       });
-    
+
       if (results.affectedRows === 0) {
         return {
           success: false,
@@ -209,19 +223,20 @@ export default class InventarioModel {
       }
       const query_log = `INSERT INTO inventario_log (id_inventario, id_user, id_area, id_log, estado)
                                   VALUES (:id_inventario, :id_user, :id_area, :id_log, :estado);`;
-  
-      const [results_log] = await connection.execute(query_log, {
+
+      const [results_log] = await pool.execute(query_log, {
         id_inventario: Number(datos.id_inventario),
         id_user: Number(datos.id_user),
         id_area: Number(datos.id_area),
         id_log: Number(datos.id_log) || Number(datos.id_user),
         estado: Number(datos.estado),
       });
-  
+
       if (results_log.affectedRows === 0) {
         return {
           success: false,
-          message: "No se pudo insertar el reporte al registro de inventario log",
+          message:
+            "No se pudo insertar el reporte al registro de inventario log",
           data: {
             id_user: datos.id_user,
             id_area: datos.id_area,
@@ -241,7 +256,7 @@ export default class InventarioModel {
           observacion: datos.observacion?.trim() || "",
         },
       };
-    }catch(error){
+    } catch (error) {
       return {
         success: false,
         message: "No se pudo reportar el artículo",
@@ -253,12 +268,13 @@ export default class InventarioModel {
           estado: datos.estado,
           observacion: datos.observacion?.trim() || "",
         },
-      }
+      };
     }
   }
 
   async getDatosArticuloModel(id) {
     const tabla = "inventario";
+    let pool = getPool();
     const query = `SELECT i.*, concat(u.apellido,' ', u.nombre) AS usuario, a.nombre AS area, 
                         c.nombre AS nom_categoria, ev.nombre AS evidencia, 
                         (SELECT r.fechareg FROM reportes r WHERE r.id_inventario = i.id AND r.id_reporte IS NULL ORDER BY r.id DESC LIMIT 1) AS fecha_reporte,
@@ -270,7 +286,7 @@ export default class InventarioModel {
                     LEFT JOIN categoria c ON c.id = i.id_categoria 
                     LEFT JOIN evidencias ev ON ev.id_inventario = i.id 
                     WHERE i.id = :id`;
-    const [results] = await connection.execute(query, { id: Number(id) });
+    const [results] = await pool.query(query, { id: Number(id) });
     if (results.length === 0) {
       return {
         success: false,

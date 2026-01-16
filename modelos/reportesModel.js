@@ -1,8 +1,9 @@
-import connection from "../database.js";
+import { getPool } from "../database.js";
 
 export default class ReportesModel {
   async getReportesGeneral() {
     const tabla = "inventario";
+    let pool = getPool();
     const query = `SELECT DISTINCT SQL_NO_CACHE
                             iv.*,
                             (SELECT e.nombre FROM estado e WHERE e.id = iv.estado) AS nom_estado,
@@ -24,20 +25,21 @@ export default class ReportesModel {
                             WHERE rpe.id_reporte = rp.id AND rpe.estado = 3
                         )
                         ORDER BY fecha_reporte DESC;`;
-    const [results] = await connection.execute(query);
+    const [results] = await pool.query(query);
     return results;
   }
 
   async getInformacionReporteArticulo(id) {
     const tabla = "reportes";
+    let pool = getPool(); 
     const query = `SELECT * FROM ${tabla} WHERE id_inventario = :id ORDER BY id DESC LIMIT 1;`;
-    const [results] = await connection.execute(query, { id: Number(id) });
+    const [results] = await pool.query(query, { id: Number(id) });
     return results[0];
   }
 
   async solucionarReporte(datos) {
-    
-    const conn = await connection.getConnection(); // 👈 obtener una conexión del pool
+    const pool = getPool();
+    const conn = await pool.getConnection(); // 👈 obtener una conexión del pool
     try {
       await conn.beginTransaction();
 
@@ -111,6 +113,6 @@ export default class ReportesModel {
         message: "Error al solucionar el reporte",
         error,
       };
-    }
+    } 
   }
 }

@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { getPool } from "./database.js";
 //import dotenv from "dotenv";
 import RouterUsuarios from "./routes/usuariosRutas.js";
 import RouterPerfil from "./routes/perfilRutas.js";
@@ -31,8 +32,19 @@ app.use(express.json({ limit: '20mb' })); // Ajusta el límite según lo que nec
 app.use(cors());
 
 //Ruta de inicio (Prueba)
-app.get("/", (req, res) => {
-  res.send("SERVIDOR DEL COLEGIO REAL ROYAL SCHOOL 👑 🏫... CONEXIÓN ESTABLECIDA 💪");
+app.get("/api/test", (req, res) => {
+  res.send("SERVIDOR DEL COLEGIO REAL ROYAL SCHOOL 👑 🏫... ");
+});
+
+//TEMP HEALTH DB
+app.get("/api/health/db", async (req, res) => {
+  try {
+    const pool = getPool();
+    await pool.query("SELECT 1");
+    res.json({ db: "ok" });
+  } catch (e) {
+    res.status(500).json({ db: "fail", error: e.message });
+  }
 });
 
 //Rutas para los usuarios
@@ -57,7 +69,8 @@ app.use("/api/reportes", RouterReportes);
 app.use("/api/actividades_mensajero", RouterActividadesMensajero);
 
 //app listen para levantar el servidor
-app.listen(PORT, hostname, () => {
-  console.log(`Server is running on port http://${hostname}:${PORT}`);
-});
+// app.listen(PORT, hostname, () => {
+//   console.log(`Server is running on port http://${hostname}:${PORT}`);
+// });
 
+export default app; 
